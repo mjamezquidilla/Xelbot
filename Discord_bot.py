@@ -14,6 +14,7 @@ async def on_message(message):
     id = client.get_guild(777237901058244628)
     message_guild = message.guild
 
+
     if message.author == client.user:
         return
 
@@ -27,11 +28,15 @@ async def on_message(message):
         for channel in await message_guild.fetch_channels():
             await message.channel.send(channel)
 
+    if message.content.startswith('$best_girl'):
+        await message.channel.send('Since I''m Xelbot, it''s definitely Amelia Watson and Amatsuka Uto.')
+        await message.channel.send(':InaKek:')
+
     if message.content.startswith('$emoji_stats'):
         found_emojis = []
         emoji_count = defaultdict(int)
         total_reactions = defaultdict(int)
-        check_date = datetime.datetime.now() + datetime.timedelta(-30)
+        check_date = datetime.datetime.now() + datetime.timedelta(-1)
 
         message_history = message.channel.history(limit=None, after=check_date)
       
@@ -61,14 +66,41 @@ async def on_message(message):
             if emoji in total_reactions:
                 emoji_count[emoji] += total_reactions[emoji]
 
-        temp_str = 'Emoji use over last 30 day:\n'
+        temp_str = 'Emoji use over today:\n'
 
         for key in sorted(emoji_count, key=emoji_count.get, reverse=True):
             temp_str += f'{key}: {emoji_count[key]}\n'
 
-        print(len(temp_str))
-        print(temp_str)
-        # await message.channel.send(temp_str)
+        try:
+            await message.channel.send(temp_str)
+        except:
+            print(len(temp_str))
+            print(temp_str)
+        
+    if message.content.startswith('$active_members'):
+        users_count = defaultdict(int)
+        check_date = datetime.datetime.now() + datetime.timedelta(-30)
+
+        message_history = message.channel.history(limit=None, after=check_date)
+      
+        user_list = defaultdict(int)
+
+        async for message in message_history:
+            user_list[message.author] = message.author
+
+            if str(user_list[message.author]) == str(message.author):
+                users_count[message.author] += 1
+      
+        temp_str = 'Active users for the last 30 days:\n'
+
+        for key in sorted(users_count, key=users_count.get, reverse=True):
+            temp_str += f'{key}: {users_count[key]}\n'
+
+        try:
+            await message.channel.send(temp_str)
+        except:
+            print(len(temp_str))
+            print(temp_str)    
 
 
 client.run('Nzk0MTA2NzcwMjA4NzE4ODU4.X-1_jw.OvSRdgKjAwXEkw1Xx7RGEl8d3Ik')
